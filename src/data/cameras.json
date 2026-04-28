@@ -1,0 +1,281 @@
+[
+    {
+        "id": "cam-001",
+        "name": "Camera AI Cổng Vào",
+        "manufacturer": "Dahua",
+        "model": "SD49425XB-HNR",
+        "lat": 21.0288,
+        "lng": 105.8522,
+        "ip": "192.168.1.101",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.101:554/stream1",
+        "videoSrc": "/videos/cam-general.mp4",
+        "status": "online",
+        "capabilities": [
+            "PTZ",
+            "AI Face Detection",
+            "Night Vision"
+        ],
+        "location": "Quận Hoàn Kiếm",
+        "installedAt": "2024-06-15"
+    },
+    {
+        "id": "cam-002",
+        "name": "Camera AI Vượt Đèn Đỏ – Đinh Tiên Hoàng",
+        "manufacturer": "Hikvision",
+        "model": "DS-2CD2T47G2-L",
+        "lat": 21.0310,
+        "lng": 105.8553,
+        "ip": "192.168.1.102",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.102:554/stream1",
+        "videoSrc": "/videos/cam-redlight.mp4",
+        "status": "online",
+        "capabilities": [
+            "AI Red Light Violation",
+            "License Plate Recognition",
+            "4K"
+        ],
+        "location": "Quận Hoàn Kiếm",
+        "installedAt": "2024-07-20"
+    },
+    {
+        "id": "cam-003",
+        "name": "Camera AI Vượt Đèn Đỏ – Tràng Tiền",
+        "manufacturer": "Dahua",
+        "model": "ITC452-AU3F-IRL8ZF",
+        "lat": 21.0255,
+        "lng": 105.8571,
+        "ip": "192.168.1.103",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.103:554/stream1",
+        "videoSrc": "/videos/cam-redlight.mp4",
+        "status": "online",
+        "capabilities": [
+            "AI Red Light Violation",
+            "License Plate Recognition",
+            "Infrared"
+        ],
+        "location": "Quận Hoàn Kiếm",
+        "installedAt": "2024-07-22"
+    },
+    {
+        "id": "cam-004",
+        "name": "Camera AI Dây An Toàn – Vincom Bà Triệu",
+        "manufacturer": "Hikvision",
+        "model": "DS-2CD2047G2-LU",
+        "lat": 21.0215,
+        "lng": 105.8498,
+        "ip": "192.168.1.104",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.104:554/stream1",
+        "videoSrc": "/videos/cam-seatbelt.mp4",
+        "status": "online",
+        "capabilities": [
+            "AI Seatbelt Detection",
+            "Bus Monitoring",
+            "Full Color Night"
+        ],
+        "location": "Quận Hai Bà Trưng",
+        "installedAt": "2024-08-01"
+    },
+    {
+        "id": "cam-005",
+        "name": "Camera AI Dây An Toàn – Kim Mã",
+        "manufacturer": "Dahua",
+        "model": "IPC-HFW5842H-ZHE",
+        "lat": 21.0321,
+        "lng": 105.8195,
+        "ip": "192.168.1.105",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.105:554/stream1",
+        "videoSrc": "/videos/cam-seatbelt.mp4",
+        "status": "online",
+        "capabilities": [
+            "AI Seatbelt Detection",
+            "Vehicle Classification",
+            "Deep Learning"
+        ],
+        "location": "Quận Ba Đình",
+        "installedAt": "2024-08-10"
+    },
+    {
+        "id": "cam-006",
+        "name": "Camera AI Hàng Xanh",
+        "manufacturer": "Hikvision",
+        "model": "DS-2CD2185G1-I",
+        "lat": 21.0502,
+        "lng": 105.8449,
+        "ip": "192.168.1.106",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.106:554/stream1",
+        "videoSrc": "/videos/cam-general.mp4",
+        "status": "offline",
+        "capabilities": [
+            "Night Vision",
+            "Motion Detection"
+        ],
+        "location": "Quận Tây Hồ",
+        "installedAt": "2024-05-12"
+    },
+    {
+        "id": "cam-007",
+        "name": "Camera AI Vượt Đèn Đỏ – Nguyễn Chí Thanh",
+        "manufacturer": "Dahua",
+        "model": "ITC413-PW4D-IZ3",
+        "lat": 21.0227,
+        "lng": 105.8215,
+        "ip": "192.168.1.107",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.107:554/stream1",
+        "videoSrc": "/videos/cam-redlight.mp4",
+        "status": "online",
+        "capabilities": [
+            "AI Red Light Violation",
+            "Speed Detection",
+            "Multi-lane"
+        ],
+        "location": "Quận Đống Đa",
+        "installedAt": "2024-09-01"
+    },
+    {
+        "id": "cam-008",
+        "name": "Camera AI Dây An Toàn – Cầu Giấy",
+        "manufacturer": "Hikvision",
+        "model": "DS-2CD2T47G2H-LI",
+        "lat": 21.0308,
+        "lng": 105.7950,
+        "ip": "192.168.1.108",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.108:554/stream1",
+        "videoSrc": "/videos/cam-seatbelt.mp4",
+        "status": "online",
+        "capabilities": [
+            "AI Seatbelt Detection",
+            "Bus Lane Monitoring",
+            "4K ColorVu"
+        ],
+        "location": "Quận Cầu Giấy",
+        "installedAt": "2024-09-15"
+    },
+    {
+        "id": "cam-009",
+        "name": "Camera AI Quảng Trường Ba Đình",
+        "manufacturer": "Dahua",
+        "model": "SD49425XB-HNR",
+        "lat": 21.0380,
+        "lng": 105.8354,
+        "ip": "192.168.1.109",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.109:554/stream1",
+        "videoSrc": "/videos/cam-general.mp4",
+        "status": "online",
+        "capabilities": [
+            "PTZ",
+            "360° Patrol",
+            "Crowd Analytics"
+        ],
+        "location": "Quận Ba Đình",
+        "installedAt": "2024-04-20"
+    },
+    {
+        "id": "cam-010",
+        "name": "Camera AI Ô Chợ Dừa – Đống Đa",
+        "manufacturer": "Hikvision",
+        "model": "DS-2CD2346G2-ISU",
+        "lat": 21.0219,
+        "lng": 105.8450,
+        "ip": "192.168.1.110",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.110:554/stream1",
+        "videoSrc": "/videos/cam-general.mp4",
+        "status": "error",
+        "capabilities": [
+            "AI Intrusion Detection",
+            "Night Vision"
+        ],
+        "location": "Quận Đống Đa",
+        "installedAt": "2024-06-30"
+    },
+    {
+        "id": "cam-011",
+        "name": "Camera AI Dây An Toàn – Hai Bà Trưng",
+        "manufacturer": "Dahua",
+        "model": "IPC-HFW5842H-ZHE",
+        "lat": 21.0241,
+        "lng": 105.8475,
+        "ip": "192.168.1.111",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.111:554/stream1",
+        "videoSrc": "/videos/cam-seatbelt.mp4",
+        "status": "online",
+        "capabilities": [
+            "AI Seatbelt Detection",
+            "Vehicle Classification"
+        ],
+        "location": "Quận Hai Bà Trưng",
+        "installedAt": "2024-10-05"
+    },
+    {
+        "id": "cam-012",
+        "name": "Camera AI Vượt Đèn Đỏ – Long Biên",
+        "manufacturer": "Hikvision",
+        "model": "IDS-2CD9044G0-AP",
+        "lat": 21.0448,
+        "lng": 105.8680,
+        "ip": "192.168.1.112",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.112:554/stream1",
+        "videoSrc": "/videos/cam-redlight.mp4",
+        "status": "online",
+        "capabilities": [
+            "AI Red Light Violation",
+            "License Plate Recognition",
+            "Bridge Monitoring"
+        ],
+        "location": "Quận Long Biên",
+        "installedAt": "2024-10-15"
+    },
+    {
+        "id": "cam-013",
+        "name": "Camera AI Thanh Xuân",
+        "manufacturer": "Dahua",
+        "model": "SD49425XB-HNR",
+        "lat": 20.9985,
+        "lng": 105.8137,
+        "ip": "192.168.1.113",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.113:554/stream1",
+        "videoSrc": "/videos/cam-general.mp4",
+        "status": "online",
+        "capabilities": [
+            "PTZ",
+            "AI Face Detection"
+        ],
+        "location": "Quận Thanh Xuân",
+        "installedAt": "2024-11-01"
+    },
+    {
+        "id": "cam-014",
+        "name": "Camera AI Đào Duy Từ",
+        "manufacturer": "Hikvision",
+        "model": "DS-2CD2T47G2-L",
+        "lat": 21.0370,
+        "lng": 105.8596,
+        "ip": "192.168.1.114",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.114:554/stream1",
+        "videoSrc": "/videos/cam-redlight.mp4",
+        "status": "offline",
+        "capabilities": [
+            "AI Red Light Violation",
+            "License Plate Recognition"
+        ],
+        "location": "Quận Hoàn Kiếm",
+        "installedAt": "2024-11-10"
+    },
+    {
+        "id": "cam-015",
+        "name": "Camera AI Dây An Toàn – Trần Duy Hưng",
+        "manufacturer": "Dahua",
+        "model": "IPC-HFW5842H-ZHE",
+        "lat": 21.0030,
+        "lng": 105.7924,
+        "ip": "192.168.1.115",
+        "rtspUrl": "rtsp://admin:admin123@192.168.1.115:554/stream1",
+        "videoSrc": "/videos/cam-seatbelt.mp4",
+        "status": "online",
+        "capabilities": [
+            "AI Seatbelt Detection",
+            "Bus Lane Monitoring"
+        ],
+        "location": "Quận Cầu Giấy",
+        "installedAt": "2024-12-01"
+    }
+]

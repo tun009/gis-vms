@@ -1,0 +1,221 @@
+# Kế hoạch: Frontend Prototype – GIS VMS
+
+## Mục tiêu
+
+Xây dựng giao diện **hoàn chỉnh** cho hệ thống GIS VMS mà **không cần backend**:
+- Mock data bằng file JSON tĩnh
+- Google Maps API để hiển thị bản đồ + vẽ polygon
+- MP4 loop thay thế luồng RTSP
+- Toàn bộ logic tính toán không gian chạy ở client
+
+---
+
+## Stack Công nghệ
+
+| Hạng mục | Lựa chọn | Lý do |
+|---|---|---|
+| Framework | **Vite + React + TypeScript** | Nhanh, HMR tốt, type-safe |
+| Styling | **Vanilla CSS** (CSS Variables) | Kiểm soát toàn bộ, không dependency nặng |
+| Bản đồ | **Google Maps JavaScript API** | Sẵn có, polygon drawing tích hợp |
+| Spatial | **@turf/turf** (client-side) | Tính `booleanPointInPolygon` không cần PostGIS |
+| Video | **HTML5 `<video>` tag** | MP4 loop, không cần media server |
+| State | **React Context + useReducer** | Đủ cho prototype, không cần Redux |
+| Icons | **Lucide React** | Nhẹ, đẹp |
+
+---
+
+## Cấu trúc Thư mục
+
+```
+camera-manager/
+├── public/
+│   └── videos/               # MP4 loop files (mock RTSP)
+│       ├── cam-street-01.mp4
+│       ├── cam-parking-01.mp4
+│       └── cam-lobby-01.mp4
+├── src/
+│   ├── assets/
+│   ├── data/
+│   │   └── cameras.json      # Mock database
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── AppShell.tsx       # Layout tổng thể (sidebar + map)
+│   │   │   └── Sidebar.tsx        # Panel bên trái
+│   │   ├── map/
+│   │   │   ├── MapView.tsx        # Google Maps container
+│   │   │   ├── CameraMarker.tsx   # Custom marker cho mỗi camera
+│   │   │   └── PolygonTools.tsx   # Thanh công cụ vẽ polygon
+│   │   ├── camera/
+│   │   │   ├── CameraList.tsx     # Danh sách camera (lọc theo polygon)
+│   │   │   ├── CameraCard.tsx     # Card hiển thị 1 camera
+│   │   │   └── CameraDetail.tsx   # Panel chi tiết + video player
+│   │   └── ui/
+│   │       ├── StatusBadge.tsx    # Badge online/offline
+│   │       ├── VideoPlayer.tsx    # HTML5 video + controls
+│   │       └── Toast.tsx          # Thông báo nhanh
+│   ├── context/
+│   │   └── AppContext.tsx         # Global state (cameras, selection, polygon)
+│   ├── hooks/
+│   │   ├── useGoogleMaps.ts       # Load Google Maps API
+│   │   └── useSpatialFilter.ts    # Logic lọc camera trong polygon (Turf.js)
+│   ├── types/
+│   │   └── index.ts               # TypeScript interfaces
+│   ├── utils/
+│   │   └── spatial.ts             # Helper Turf.js
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
+├── .env                           # VITE_GOOGLE_MAPS_API_KEY
+├── index.html
+├── vite.config.ts
+└── package.json
+```
+
+---
+
+## Mock Data Schema (`cameras.json`)
+
+```json
+[
+  {
+    "id": "cam-001",
+    "name": "Camera Cổng Chính",
+    "manufacturer": "Dahua",
+    "model": "SD49425XB-HNR",
+    "lat": 21.0285,
+    "lng": 105.8542,
+    "rtspUrl": "rtsp://admin:admin123@192.168.1.100:554/stream1",
+    "videoSrc": "/videos/cam-street-01.mp4",
+    "status": "online",
+    "ip": "192.168.1.100",
+    "capabilities": ["PTZ", "AI Face Detection"]
+  },
+  {
+    "id": "cam-002",
+    "name": "Camera Bãi Đỗ Xe",
+    "manufacturer": "Hikvision",
+    "model": "DS-2CD2347G2-LU",
+    "lat": 21.0291,
+    "lng": 105.8558,
+    "rtspUrl": "rtsp://admin:admin123@192.168.1.101:554/stream1",
+    "videoSrc": "/videos/cam-parking-01.mp4",
+    "status": "online",
+    "ip": "192.168.1.101",
+    "capabilities": ["AI License Plate"]
+  }
+]
+```
+
+*(~15–20 camera giả lập, phân bố quanh 1 khu vực cụ thể trên bản đồ)*
+
+---
+
+## Các Tính năng & Component Chi tiết
+
+### Tính năng 1: Bản đồ với Camera Markers
+- Load Google Maps, center về Hà Nội
+- Render custom marker (màu theo status: xanh = online, đỏ = offline)
+- Click marker → hiển thị popup nhỏ + mở `CameraDetail`
+
+### Tính năng 2: Vẽ Polygon Quét Vùng
+- Toolbar: nút **"Bắt đầu vẽ"** / **"Xóa vùng"**
+- Dùng `google.maps.drawing.DrawingManager` để vẽ polygon
+- Sau khi vẽ xong → dùng **Turf.js `booleanPointInPolygon`** để lọc camera
+- Highlights markers nằm trong polygon, làm mờ markers ngoài
+- Panel bên trái cập nhật danh sách camera trong vùng
+
+### Tính năng 3: Video Player (MP4 Loop)
+- Click vào camera → `CameraDetail` panel trượt ra bên phải
+- HTML5 `<video autoplay loop muted>` với `src` từ `videoSrc` field
+- Hiển thị metadata: ID, tên, IP, model, status, capabilities
+- Nút "Fullscreen", nút "Đóng"
+
+### Tính năng 4: Danh sách & Tìm kiếm
+- Sidebar trái: danh sách tất cả camera (hoặc camera trong polygon nếu đã vẽ)
+- Search theo tên / IP
+- Filter theo hãng (Dahua / Hikvision) và status
+
+---
+
+## Proposed Changes
+
+### [NEW] Project (Vite + React)
+
+#### [NEW] package.json
+Khởi tạo với: `react`, `react-dom`, `typescript`, `vite`, `@types/react`, `@turf/turf`, `lucide-react`, `@types/google.maps`
+
+#### [NEW] src/types/index.ts
+Định nghĩa interface `Camera`, `AppState`, `DrawingMode`
+
+#### [NEW] src/data/cameras.json
+~15–20 camera giả lập phân bố trên bản đồ Hà Nội
+
+#### [NEW] public/videos/
+3 file MP4 loop chất lượng thấp (có thể dùng sample videos công khai)
+
+#### [NEW] src/index.css
+Design system: CSS variables, dark theme, layout grid
+
+#### [NEW] src/context/AppContext.tsx
+Global state: danh sách camera, camera đang chọn, polygon hiện tại, mode vẽ
+
+#### [NEW] src/hooks/useGoogleMaps.ts
+Dynamic load Google Maps API script từ env key
+
+#### [NEW] src/hooks/useSpatialFilter.ts
+Logic Turf.js: nhận polygon GeoJSON + danh sách camera → trả subset trong polygon
+
+#### [NEW] src/components/map/MapView.tsx
+Google Maps container, quản lý markers và DrawingManager
+
+#### [NEW] src/components/map/PolygonTools.tsx
+Toolbar nút vẽ / xóa polygon
+
+#### [NEW] src/components/camera/CameraList.tsx
+Danh sách camera bên sidebar, có search + filter
+
+#### [NEW] src/components/camera/CameraDetail.tsx
+Panel chi tiết camera + video player
+
+#### [NEW] src/components/ui/VideoPlayer.tsx
+HTML5 video loop với custom controls
+
+#### [NEW] src/App.tsx
+Layout tổng thể kết hợp tất cả components
+
+---
+
+## Verification Plan
+
+### Manual Verification (Tất cả thực hiện trên trình duyệt)
+
+**Bước 0: Khởi động**
+```bash
+cd d:\Elcom\VMS\camera-manager
+npm run dev
+# Mở http://localhost:5173
+```
+
+**Bước 1: Bản đồ & Markers**
+- [ ] Bản đồ Google Maps load thành công, không lỗi console
+- [ ] ~15 markers hiển thị đúng vị trí, màu xanh (online) / đỏ (offline)
+- [ ] Click marker → popup hiển thị tên + status
+
+**Bước 2: Quét Vùng Polygon**
+- [ ] Click "Bắt đầu vẽ" → con trỏ chuyển sang chế độ vẽ
+- [ ] Vẽ polygon bao quanh một nhóm camera → polygon hiển thị trên map
+- [ ] Markers trong polygon sáng lên, markers ngoài mờ đi
+- [ ] Danh sách bên trái cập nhật chỉ còn camera trong vùng
+- [ ] Click "Xóa vùng" → tất cả reset về trạng thái ban đầu
+
+**Bước 3: Xem Video Stream**
+- [ ] Click camera (hoặc từ list) → panel CameraDetail trượt ra
+- [ ] Video MP4 tự động phát, loop không ngắt
+- [ ] Hiển thị đúng metadata (tên, IP, model, capabilities)
+- [ ] Nút Fullscreen hoạt động
+- [ ] Nút Đóng ẩn panel
+
+**Bước 4: Search & Filter**
+- [ ] Gõ tên camera vào ô tìm kiếm → danh sách lọc real-time
+- [ ] Filter theo "Dahua" → chỉ hiện Dahua cameras
+- [ ] Filter theo "offline" → chỉ hiện camera offline
