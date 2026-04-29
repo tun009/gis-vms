@@ -62,7 +62,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         <input
                             type="text"
                             className="bg-transparent border-none w-full text-white placeholder-gray-500 focus:outline-none focus:ring-0 text-sm z-10"
-                            placeholder="Tên đăng nhập"
+                            placeholder="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             style={{ WebkitBoxShadow: '0 0 0px 1000px #252a35 inset', WebkitTextFillColor: 'white' }}
@@ -74,7 +74,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         <input
                             type={showPassword ? 'text' : 'password'}
                             className="bg-transparent border-none w-full text-white placeholder-gray-500 focus:outline-none focus:ring-0 text-sm font-sans z-10"
-                            placeholder="Mật khẩu"
+                            placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             style={{ WebkitBoxShadow: '0 0 0px 1000px #252a35 inset', WebkitTextFillColor: 'white' }}
