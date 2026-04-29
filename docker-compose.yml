@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  vms-app:
+    build: .
+    image: vms-camera-manager:latest
+    container_name: vms-app
+    restart: always
+    ports:
+      - "8089:80"
+
