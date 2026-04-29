@@ -65,7 +65,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                             placeholder="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            style={{ WebkitBoxShadow: '0 0 0px 1000px #252a35 inset', WebkitTextFillColor: 'white' }}
+                            style={{ WebkitBoxShadow: '0 0 0px 1000px #252a35 inset', WebkitTextFillColor: 'gray' }}
                         />
                     </div>
 
@@ -77,7 +77,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            style={{ WebkitBoxShadow: '0 0 0px 1000px #252a35 inset', WebkitTextFillColor: 'white' }}
+                            style={{ WebkitBoxShadow: '0 0 0px 1000px #252a35 inset', WebkitTextFillColor: 'gray' }}
                         />
                         <button
                             type="button"
