@@ -3,11 +3,16 @@
 @tailwind utilities;
 
 @layer base {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
-  html, body, #root {
+  html,
+  body,
+  #root {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -20,51 +25,50 @@
     font-feature-settings: 'cv01', 'ss03';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
+
   ::-webkit-scrollbar-track {
     background: transparent;
   }
+
   ::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.12);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 3px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.25);
   }
 
-  * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
 }
 
 @layer components {
-  /* Linear-style card */
   .card-linear {
-    @apply bg-elevated border border-white/[0.08] rounded-lg;
+    @apply bg-elevated border border-white/[0.1] rounded-lg;
   }
 
-  /* Linear-style button ghost */
   .btn-ghost {
-    @apply bg-white/[0.02] border border-white/[0.08] text-fg-dim rounded-md px-3 py-1.5 text-sm
-           hover:bg-white/[0.05] hover:text-fg transition-all duration-150 cursor-pointer;
+    @apply bg-white/[0.04] border border-white/[0.1] text-fg-dim rounded-md px-3 py-2 text-sm hover:bg-white/[0.08] hover:text-fg transition-all duration-150 cursor-pointer;
   }
 
-  /* Linear-style button brand */
   .btn-brand {
-    @apply bg-brand text-fg rounded-md px-3 py-1.5 text-sm font-medium
-           hover:bg-accent-light transition-all duration-150 cursor-pointer;
+    @apply bg-brand text-fg rounded-md px-3 py-2 text-sm font-medium hover:bg-accent-light transition-all duration-150 cursor-pointer;
   }
 
-  /* Linear-style pill */
   .pill {
-    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium
-           border border-line text-fg-dim bg-transparent;
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border border-line text-fg-muted bg-transparent transition-all cursor-pointer;
   }
 
-  /* Active pill */
   .pill-active {
     @apply bg-brand/20 border-brand/40 text-accent-light;
   }
@@ -72,81 +76,59 @@
 
 /* ─── Leaflet Overrides ─── */
 .leaflet-container {
-  background: #0f1011 !important;
+  background: #0d0e11 !important;
   font-family: 'Inter', sans-serif !important;
 }
 
-.leaflet-tile-pane {
-  filter: brightness(0.85) saturate(0.7) hue-rotate(5deg);
-}
 
 .leaflet-control-zoom {
-  border: 1px solid rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: 8px !important;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.4) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+  margin-top: 12px !important;
+  margin-left: 12px !important;
 }
 
 .leaflet-control-zoom a {
-  background: #191a1b !important;
+  background: #1e2025 !important;
   color: #d0d6e0 !important;
-  border-color: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  font-size: 16px !important;
   transition: background 0.15s;
 }
 
 .leaflet-control-zoom a:hover {
-  background: #28282c !important;
+  background: #2a2d35 !important;
   color: #f7f8f8 !important;
 }
 
-.leaflet-draw-toolbar a {
-  background-color: #191a1b !important;
-  border-color: rgba(255,255,255,0.08) !important;
+/* Hide default leaflet-draw toolbar — custom toolbar used instead */
+.leaflet-draw-toolbar,
+.leaflet-draw-actions {
+  display: none !important;
 }
 
-/* Custom camera marker */
-.camera-marker {
-  position: relative;
+/* Hide attribution watermark (internal/demo use) */
+.leaflet-control-attribution {
+  display: none !important;
 }
 
-.camera-marker-pulse {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  animation: markerPulse 2.5s ease-out infinite;
-}
-
-@keyframes markerPulse {
-  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
-  100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
-}
-
-/* Video tile LIVE badge flicker */
-@keyframes liveBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.live-dot {
-  animation: liveBlink 1.5s ease-in-out infinite;
-}
-
-/* Leaflet popup override */
+/* Popup override */
 .leaflet-popup-content-wrapper {
-  background: #191a1b !important;
-  border: 1px solid rgba(255,255,255,0.08) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5) !important;
+  background: #1e2025 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
   color: #f7f8f8 !important;
   padding: 0 !important;
 }
 
 .leaflet-popup-tip {
-  background: #191a1b !important;
+  background: #1e2025 !important;
 }
 
 .leaflet-popup-content {
@@ -156,6 +138,76 @@
 
 .leaflet-popup-close-button {
   color: #8a8f98 !important;
-  top: 8px !important;
-  right: 8px !important;
+  top: 10px !important;
+  right: 10px !important;
+  font-size: 16px !important;
+}
+
+/* Status pulse animation */
+@keyframes pulseDot {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+}
+
+.animate-pulse-dot {
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+/* LIVE badge blink */
+@keyframes liveBlink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.live-dot {
+  animation: liveBlink 1.5s ease-in-out infinite;
+}
+
+/* Slide animations */
+@keyframes slideRight {
+  0% {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-right {
+  animation: slideRight 0.25s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeUp 0.2s ease-out;
 }

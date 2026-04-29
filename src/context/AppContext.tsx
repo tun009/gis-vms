@@ -20,7 +20,8 @@ const initialState: AppState = {
 function reducer(state: AppState, action: AppAction): AppState {
     switch (action.type) {
         case 'SET_SELECTED_CAMERA':
-            return { ...state, selectedCamera: action.payload, isDetailOpen: action.payload !== null };
+            // Selecting a camera shows the floating map panel but NOT the right detail panel
+            return { ...state, selectedCamera: action.payload };
         case 'SET_ACTIVE_VIEW':
             return { ...state, activeView: action.payload, selectedCamera: null, isDetailOpen: false };
         case 'SET_DRAW_MODE':
@@ -42,7 +43,21 @@ function reducer(state: AppState, action: AppAction): AppState {
         case 'OPEN_DETAIL':
             return { ...state, isDetailOpen: true };
         case 'CLOSE_DETAIL':
-            return { ...state, isDetailOpen: false, selectedCamera: null };
+            // Close detail panel only, keep camera selected (map panel stays)
+            return { ...state, isDetailOpen: false };
+        case 'RESET_MAP_STATE':
+            // Called when leaving the map route — clear all transient map state
+            return {
+                ...state,
+                selectedCamera: null,
+                isDetailOpen: false,
+                drawMode: 'idle',
+                drawnPolygon: null,
+                filteredCameras: state.cameras,
+                searchQuery: '',
+                manufacturerFilter: 'all',
+                statusFilter: 'all',
+            };
         default:
             return state;
     }

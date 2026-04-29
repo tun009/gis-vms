@@ -1,11 +1,13 @@
-import { Map, MonitorPlay, Settings, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { Map, MonitorPlay, Settings, Bell, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import type { ViewMode } from '../../types';
+import { useAuth } from '../../context/AuthContext';
 
-const navItems: { view: ViewMode; icon: typeof Map; label: string }[] = [
-    { view: 'map', icon: Map, label: 'Bản đồ' },
-    { view: 'monitor', icon: MonitorPlay, label: 'Giám sát' },
-    { view: 'settings', icon: Settings, label: 'Cài đặt' },
+const navItems = [
+    { to: '/map', icon: Map, label: 'Bản đồ' },
+    { to: '/monitor', icon: MonitorPlay, label: 'Giám sát' },
+    { to: '/settings', icon: Settings, label: 'Cài đặt' },
 ];
 
 interface AppShellProps {
@@ -16,69 +18,107 @@ interface AppShellProps {
 
 export default function AppShell({ children, sidebar, detail }: AppShellProps) {
     const { state, dispatch } = useApp();
+    const { logout } = useAuth();
+    const location = useLocation();
+    const isMapView = location.pathname === '/map';
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
 
     return (
         <div className="flex flex-col h-screen bg-base overflow-hidden">
             {/* ─── Header ─── */}
-            <header className="flex-shrink-0 flex items-center justify-between px-4 h-12 bg-panel border-b border-white/[0.06] z-50">
+            <header className="relative flex-shrink-0 flex items-center justify-between px-5 h-14 bg-panel border-b border-white/[0.08] z-[9999]">
                 {/* Logo */}
-                <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-md bg-brand flex items-center justify-center">
-                        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-                            <rect x="0" y="2" width="10" height="8" rx="1.5" fill="white" />
-                            <path d="M10 4L15 1.5v9L10 8V4Z" fill="white" />
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center shadow-glow-brand">
+                        <svg width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <rect x="0" y="2.5" width="11" height="8" rx="2" fill="white" />
+                            <path d="M11 4.5L17 2v9l-6-2.5V4.5Z" fill="white" />
                         </svg>
                     </div>
                     <div>
-                        <span className="text-sm font-medium text-fg tracking-tight">GIS VMS</span>
-                        <span className="text-[10px] text-fg-subtle ml-1.5 hidden sm:inline">Giám sát Camera AI</span>
+                        <p className="text-sm font-semibold text-fg tracking-tight leading-none">GIS VMS</p>
+                        <p className="text-[13px] text-fg-muted mt-0.5 hidden sm:block">Hệ thống giám sát Camera AI</p>
                     </div>
                 </div>
 
                 {/* Nav tabs */}
-                <nav className="flex items-center gap-0.5">
-                    {navItems.map(({ view, icon: Icon, label }) => (
-                        <button
-                            key={view}
-                            onClick={() => dispatch({ type: 'SET_ACTIVE_VIEW', payload: view })}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${state.activeView === view
-                                    ? 'bg-brand/15 text-accent-light border border-brand/25'
-                                    : 'text-fg-muted hover:text-fg-dim hover:bg-white/[0.04]'
-                                }`}
+                <nav className="flex items-center gap-1">
+                    {navItems.map(({ to, icon: Icon, label }) => (
+                        <NavLink
+                            key={to}
+                            to={to}
+                            className={({ isActive }) =>
+                                `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border ${isActive
+                                    ? 'bg-brand/20 text-fg border-brand/35'
+                                    : 'text-fg-muted hover:text-fg-dim hover:bg-white/[0.05] border-transparent'
+                                }`
+                            }
                         >
-                            <Icon size={13} />
-                            <span className="hidden sm:inline">{label}</span>
-                        </button>
+                            <Icon size={15} />
+                            <span>{label}</span>
+                        </NavLink>
                     ))}
                 </nav>
 
                 {/* Right side */}
-                <div className="flex items-center gap-2">
-                    <button className="relative p-1.5 rounded-md text-fg-muted hover:text-fg-dim hover:bg-white/[0.04] transition-all">
-                        <Bell size={14} />
-                        <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-brand" />
+                <div className="flex items-center gap-2.5 relative">
+                    <button className="relative p-2 rounded-lg text-fg-muted hover:text-fg-dim hover:bg-white/[0.05] transition-all border border-transparent hover:border-white/[0.08]">
+                        <Bell size={16} />
+                        <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand border border-panel" />
                     </button>
-                    <div className="w-7 h-7 rounded-full bg-elevated border border-white/[0.12] flex items-center justify-center text-xs text-fg-dim font-medium">
+
+                    <button
+                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                        className="w-8 h-8 rounded-full bg-brand/20 border border-brand/30 flex items-center justify-center text-sm font-semibold text-accent-light focus:outline-none hover:bg-brand/30 cursor-pointer"
+                    >
                         A
-                    </div>
+                    </button>
+
+                    {/* User Dropdown */}
+                    {isUserMenuOpen && (
+                        <>
+                            <div
+                                className="fixed inset-0 z-[999]"
+                                onClick={() => setIsUserMenuOpen(false)}
+                            />
+                            <div className="absolute right-0 top-full mt-1 w-40 bg-[#252a35] border border-white/[0.1] rounded-lg shadow-2xl z-[1000] py-2 overflow-hidden flex flex-col">
+                                <div className="px-4 py-3 border-b border-white/[0.05] mb-1">
+                                    <p className="text-sm font-semibold text-white truncate">Administrator</p>
+                                    <p className="text-xs text-gray-400 mt-0.5 truncate">admin</p>
+                                </div>
+                                <button
+                                    onClick={logout}
+                                    className="flex items-center gap-3 w-full px-4 py-2 mt-1 focus:outline-none hover:bg-red-500/10 group text-left"
+                                >
+                                    <LogOut size={16} className="text-red-400 group-hover:text-red-300" />
+                                    <span className="text-sm font-medium text-red-400 group-hover:text-red-300">Đăng xuất</span>
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </header>
 
             {/* ─── Body ─── */}
             <div className="flex flex-1 min-h-0 overflow-hidden">
-                {/* Sidebar (map view only, when open) */}
-                {sidebar && state.activeView === 'map' && (
+                {/* Sidebar — only on map view */}
+                {sidebar && isMapView && (
                     <aside
-                        className={`relative flex-shrink-0 flex flex-col bg-panel border-r border-white/[0.06] transition-all duration-300 ${state.isSidebarOpen ? 'w-72' : 'w-0 overflow-hidden'
+                        className={`relative flex-shrink-0 flex flex-col bg-panel border-r border-white/[0.08] transition-all duration-300 ${state.isSidebarOpen ? 'w-80' : 'w-0 overflow-hidden'
                             }`}
                     >
                         {state.isSidebarOpen && sidebar}
                         {/* Collapse toggle */}
                         <button
                             onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
-                            className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-panel border border-white/[0.12] flex items-center justify-center text-fg-subtle hover:text-fg-dim hover:bg-elevated transition-all"
+                            className="absolute -right-3.5 top-1/2 -translate-y-1/2 z-10
+                             w-7 h-7 rounded-full bg-panel border border-white/[0.15]
+                             flex items-center justify-center
+                             text-fg-muted hover:text-fg-dim hover:bg-elevated
+                             shadow-elevated transition-all"
                         >
-                            {state.isSidebarOpen ? <ChevronLeft size={11} /> : <ChevronRight size={11} />}
+                            {state.isSidebarOpen ? <ChevronLeft size={13} /> : <ChevronRight size={13} />}
                         </button>
                     </aside>
                 )}
@@ -88,9 +128,12 @@ export default function AppShell({ children, sidebar, detail }: AppShellProps) {
                     {children}
                 </main>
 
-                {/* Detail panel (map view only) */}
-                {detail && state.activeView === 'map' && state.isDetailOpen && (
-                    <aside className="flex-shrink-0 w-80 flex flex-col bg-panel border-l border-white/[0.06] overflow-hidden animate-slide-right">
+                {/* Detail panel — only on map view */}
+                {detail && isMapView && state.isDetailOpen && (
+                    <aside
+                        className="flex-shrink-0 flex flex-col bg-panel border-l border-white/[0.08] overflow-hidden animate-slide-right"
+                        style={{ width: '340px' }}
+                    >
                         {detail}
                     </aside>
                 )}

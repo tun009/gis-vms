@@ -47,4 +47,5 @@ export type AppAction =
     | { type: 'SET_GRID_LAYOUT'; payload: GridLayout }
     | { type: 'TOGGLE_SIDEBAR' }
     | { type: 'OPEN_DETAIL' }
-    | { type: 'CLOSE_DETAIL' };
+    | { type: 'CLOSE_DETAIL' }
+    | { type: 'RESET_MAP_STATE' };

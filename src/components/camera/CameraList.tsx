@@ -10,113 +10,120 @@ export default function CameraList() {
 
     const onlineCount = state.cameras.filter(c => c.status === 'online').length;
     const offlineCount = state.cameras.filter(c => c.status !== 'online').length;
-
     const inPolygon = state.drawnPolygon !== null;
 
     return (
         <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="px-4 pt-4 pb-3 border-b border-white/[0.06]">
-                <div className="flex items-center justify-between mb-3">
+            <div className="px-4 pt-5 pb-4 border-b border-white/[0.08]">
+                <div className="flex items-center justify-between mb-4">
                     <div>
-                        <h2 className="text-sm font-medium text-fg tracking-tight">Danh sách Camera</h2>
-                        <p className="text-[11px] text-fg-subtle mt-0.5">
+                        <h2 className="text-base font-semibold text-fg tracking-tight">Danh sách Camera</h2>
+                        <p className="text-xs text-fg-muted mt-0.5">
                             {inPolygon
-                                ? `${state.filteredCameras.length} camera trong vùng`
-                                : `${state.cameras.length} thiết bị`}
+                                ? `${state.filteredCameras.length} camera trong vùng quét`
+                                : `${state.cameras.length} thiết bị · ${onlineCount} online`}
                         </p>
                     </div>
                     <button
                         onClick={() => setShowFilters(v => !v)}
-                        className={`p-1.5 rounded-md border transition-all ${showFilters
+                        className={`p-2 rounded-md border transition-all ${showFilters
                             ? 'bg-brand/15 border-brand/30 text-accent-light'
-                            : 'bg-white/[0.03] border-white/[0.08] text-fg-muted hover:text-fg-dim'}`}
+                            : 'bg-white/[0.05] border-white/[0.12] text-fg-muted hover:text-fg-dim hover:bg-white/[0.08]'}`}
                         title="Bộ lọc"
                     >
-                        <SlidersHorizontal size={14} />
+                        <SlidersHorizontal size={15} />
                     </button>
                 </div>
 
                 {/* Search */}
                 <div className="relative">
-                    <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-fg-subtle pointer-events-none" />
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-muted pointer-events-none" />
                     <input
                         type="text"
                         placeholder="Tìm camera, IP, khu vực..."
                         value={state.searchQuery}
                         onChange={e => dispatch({ type: 'SET_SEARCH_QUERY', payload: e.target.value })}
-                        className="w-full bg-white/[0.03] border border-white/[0.08] rounded-md pl-8 pr-8 py-1.5
-                       text-sm text-fg-dim placeholder:text-fg-subtle
-                       focus:outline-none focus:border-brand/40 focus:bg-white/[0.05] transition-all"
+                        className="w-full bg-white/[0.04] border border-white/[0.12] rounded-lg pl-9 pr-9 py-2
+                       text-sm text-fg-dim placeholder:text-fg-muted
+                       focus:outline-none focus:border-brand/50 focus:bg-white/[0.07] transition-all"
                     />
                     {state.searchQuery && (
                         <button
                             onClick={() => dispatch({ type: 'SET_SEARCH_QUERY', payload: '' })}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-fg-subtle hover:text-fg-dim"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-fg-muted hover:text-fg-dim"
                         >
-                            <X size={12} />
+                            <X size={13} />
                         </button>
                     )}
                 </div>
 
                 {/* Filters */}
                 {showFilters && (
-                    <div className="mt-2.5 space-y-2 animate-fade-in">
-                        {/* Manufacturer filter */}
-                        <div className="flex gap-1.5 flex-wrap">
-                            {(['all', 'Dahua', 'Hikvision'] as const).map((m) => (
-                                <button
-                                    key={m}
-                                    onClick={() => dispatch({ type: 'SET_MANUFACTURER_FILTER', payload: m as Manufacturer | 'all' })}
-                                    className={`pill text-[11px] transition-all ${state.manufacturerFilter === m ? 'pill-active' : 'hover:border-line-dim hover:text-fg'}`}
-                                >
-                                    {m === 'all' ? 'Tất cả hãng' : m}
-                                </button>
-                            ))}
+                    <div className="mt-3 space-y-2.5 animate-fade-in">
+                        <div>
+                            <p className="text-[11px] text-fg-subtle uppercase tracking-wider mb-1.5">Hãng sản xuất</p>
+                            <div className="flex gap-1.5 flex-wrap">
+                                {(['all', 'Dahua', 'Hikvision'] as const).map((m) => (
+                                    <button
+                                        key={m}
+                                        onClick={() => dispatch({ type: 'SET_MANUFACTURER_FILTER', payload: m as Manufacturer | 'all' })}
+                                        className={`pill ${state.manufacturerFilter === m ? 'pill-active' : ''}`}
+                                    >
+                                        {m === 'all' ? 'Tất cả' : m}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                        {/* Status filter */}
-                        <div className="flex gap-1.5 flex-wrap">
-                            {([
-                                { key: 'all', label: 'Tất cả' },
-                                { key: 'online', label: `Online (${onlineCount})` },
-                                { key: 'offline', label: `Offline (${offlineCount})` },
-                                { key: 'error', label: 'Lỗi' },
-                            ] as const).map(({ key, label }) => (
-                                <button
-                                    key={key}
-                                    onClick={() => dispatch({ type: 'SET_STATUS_FILTER', payload: key as CameraStatus | 'all' })}
-                                    className={`pill text-[11px] transition-all ${state.statusFilter === key ? 'pill-active' : 'hover:border-line-dim hover:text-fg'}`}
-                                >
-                                    {label}
-                                </button>
-                            ))}
+                        <div>
+                            <p className="text-[11px] text-fg-subtle uppercase tracking-wider mb-1.5">Trạng thái</p>
+                            <div className="flex gap-1.5 flex-wrap">
+                                {([
+                                    { key: 'all', label: 'Tất cả' },
+                                    { key: 'online', label: `Online (${onlineCount})` },
+                                    { key: 'offline', label: `Offline (${offlineCount})` },
+                                    { key: 'error', label: 'Lỗi' },
+                                ] as const).map(({ key, label }) => (
+                                    <button
+                                        key={key}
+                                        onClick={() => dispatch({ type: 'SET_STATUS_FILTER', payload: key as CameraStatus | 'all' })}
+                                        className={`pill ${state.statusFilter === key ? 'pill-active' : ''}`}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 )}
 
-                {/* Polygon filter note */}
+                {/* Polygon filter banner */}
                 {inPolygon && (
-                    <div className="mt-2 flex items-center justify-between bg-brand/10 border border-brand/20 rounded-md px-2.5 py-1.5">
-                        <span className="text-[11px] text-accent-light">Đang lọc theo vùng vẽ</span>
+                    <div className="mt-3 flex items-center justify-between bg-brand/10 border border-brand/25 rounded-lg px-3 py-2">
+                        <div>
+                            <p className="text-xs font-medium text-accent-light">Đang lọc theo vùng vẽ</p>
+                            <p className="text-[11px] text-fg-muted mt-0.5">{state.filteredCameras.length}/{state.cameras.length} camera</p>
+                        </div>
                         <button
                             onClick={() => dispatch({ type: 'SET_DRAWN_POLYGON', payload: null })}
-                            className="text-fg-subtle hover:text-fg-dim transition-colors"
+                            className="p-1 rounded text-fg-muted hover:text-fg-dim transition-colors"
+                            title="Xóa vùng"
                         >
-                            <X size={11} />
+                            <X size={13} />
                         </button>
                     </div>
                 )}
             </div>
 
             {/* Camera list */}
-            <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1.5">
+            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
                 {state.filteredCameras.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                        <div className="w-10 h-10 rounded-full bg-elevated flex items-center justify-center mb-3">
-                            <Search size={18} className="text-fg-subtle" />
+                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                        <div className="w-12 h-12 rounded-full bg-elevated flex items-center justify-center mb-3">
+                            <Search size={20} className="text-fg-muted" />
                         </div>
-                        <p className="text-sm text-fg-muted">Không tìm thấy camera</p>
-                        <p className="text-xs text-fg-subtle mt-1">Thử thay đổi bộ lọc</p>
+                        <p className="text-sm font-medium text-fg-dim">Không tìm thấy camera</p>
+                        <p className="text-xs text-fg-muted mt-1">Thử thay đổi điều kiện lọc</p>
                     </div>
                 ) : (
                     state.filteredCameras.map((camera) => (
@@ -124,24 +131,24 @@ export default function CameraList() {
                             key={camera.id}
                             camera={camera}
                             isSelected={state.selectedCamera?.id === camera.id}
-                            isHighlighted={inPolygon}
+                            isHighlighted={inPolygon ? true : undefined}
                             onClick={() => dispatch({ type: 'SET_SELECTED_CAMERA', payload: camera })}
                         />
                     ))
                 )}
             </div>
 
-            {/* Footer stats */}
-            <div className="px-4 py-2.5 border-t border-white/[0.06] flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-online" />
-                    <span className="text-[11px] text-fg-subtle">{onlineCount} online</span>
+            {/* Footer stats bar */}
+            <div className="px-4 py-3 border-t border-white/[0.08] flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-online animate-pulse-dot" />
+                    <span className="text-xs text-fg-muted">{onlineCount} online</span>
                 </div>
-                <div className="flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cam-offline" />
-                    <span className="text-[11px] text-fg-subtle">{offlineCount} offline</span>
+                <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-cam-offline" />
+                    <span className="text-xs text-fg-muted">{offlineCount} offline</span>
                 </div>
-                <div className="text-[11px] text-fg-subtle">{state.cameras.length} tổng</div>
+                <span className="text-xs text-fg-muted">{state.cameras.length} tổng</span>
             </div>
         </div>
     );
