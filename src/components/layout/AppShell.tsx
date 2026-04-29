@@ -63,16 +63,16 @@ export default function AppShell({ children, sidebar, detail }: AppShellProps) {
 
                 {/* Right side */}
                 <div className="flex items-center gap-2.5 relative">
-                    <button className="relative p-2 rounded-lg text-fg-muted hover:text-fg-dim hover:bg-white/[0.05] transition-all border border-transparent hover:border-white/[0.08]">
+                    {/* <button className="relative p-2 rounded-lg text-fg-muted hover:text-fg-dim hover:bg-white/[0.05] transition-all border border-transparent hover:border-white/[0.08]">
                         <Bell size={16} />
                         <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand border border-panel" />
-                    </button>
+                    </button> */}
 
                     <button
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                        className="w-8 h-8 rounded-full bg-brand/20 border border-brand/30 flex items-center justify-center text-sm font-semibold text-accent-light focus:outline-none hover:bg-brand/30 cursor-pointer"
+                        className="w-8 h-8 rounded-full overflow-hidden border border-brand/30 focus:outline-none hover:ring-2 hover:ring-brand/40 cursor-pointer transition-all"
                     >
-                        A
+                        <img src="/profile.png" alt="Avatar" className="w-full h-full object-cover" />
                     </button>
 
                     {/* User Dropdown */}
