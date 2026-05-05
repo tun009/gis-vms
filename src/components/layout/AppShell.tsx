@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Map, MonitorPlay, Settings, Bell, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { Map, MonitorPlay, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
@@ -12,17 +11,12 @@ const navItems = [
 
 interface AppShellProps {
     children: React.ReactNode;
-    sidebar?: React.ReactNode;
-    detail?: React.ReactNode;
 }
 
-export default function AppShell({ children, sidebar, detail }: AppShellProps) {
-    const { state, dispatch } = useApp();
+export default function AppShell({ children }: AppShellProps) {
     const { logout } = useAuth();
     const location = useLocation();
-    const isMapView = location.pathname === '/map';
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-
 
     return (
         <div className="flex flex-col h-screen bg-base overflow-hidden">
@@ -43,7 +37,7 @@ export default function AppShell({ children, sidebar, detail }: AppShellProps) {
                 </div>
 
                 {/* Nav tabs */}
-                <nav className="flex items-center gap-1">
+                <nav className="flex items-center gap-1 mr-[120px]">
                     {navItems.map(({ to, icon: Icon, label }) => (
                         <NavLink
                             key={to}
@@ -63,11 +57,6 @@ export default function AppShell({ children, sidebar, detail }: AppShellProps) {
 
                 {/* Right side */}
                 <div className="flex items-center gap-2.5 relative">
-                    {/* <button className="relative p-2 rounded-lg text-fg-muted hover:text-fg-dim hover:bg-white/[0.05] transition-all border border-transparent hover:border-white/[0.08]">
-                        <Bell size={16} />
-                        <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand border border-panel" />
-                    </button> */}
-
                     <button
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                         className="w-8 h-8 rounded-full overflow-hidden border border-brand/30 focus:outline-none hover:ring-2 hover:ring-brand/40 cursor-pointer transition-all"
@@ -101,42 +90,8 @@ export default function AppShell({ children, sidebar, detail }: AppShellProps) {
             </header>
 
             {/* ─── Body ─── */}
-            <div className="flex flex-1 min-h-0 overflow-hidden">
-                {/* Sidebar — only on map view */}
-                {sidebar && isMapView && (
-                    <aside
-                        className={`relative flex-shrink-0 flex flex-col bg-panel border-r border-white/[0.08] transition-all duration-300 ${state.isSidebarOpen ? 'w-80' : 'w-0 overflow-hidden'
-                            }`}
-                    >
-                        {state.isSidebarOpen && sidebar}
-                        {/* Collapse toggle */}
-                        <button
-                            onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
-                            className="absolute -right-3.5 top-1/2 -translate-y-1/2 z-10
-                             w-7 h-7 rounded-full bg-panel border border-white/[0.15]
-                             flex items-center justify-center
-                             text-fg-muted hover:text-fg-dim hover:bg-elevated
-                             shadow-elevated transition-all"
-                        >
-                            {state.isSidebarOpen ? <ChevronLeft size={13} /> : <ChevronRight size={13} />}
-                        </button>
-                    </aside>
-                )}
-
-                {/* Main content */}
-                <main className="flex-1 min-w-0 overflow-hidden relative">
-                    {children}
-                </main>
-
-                {/* Detail panel — only on map view */}
-                {detail && isMapView && state.isDetailOpen && (
-                    <aside
-                        className="flex-shrink-0 flex flex-col bg-panel border-l border-white/[0.08] overflow-hidden animate-slide-right"
-                        style={{ width: '340px' }}
-                    >
-                        {detail}
-                    </aside>
-                )}
+            <div className="flex-1 min-h-0 overflow-hidden">
+                {children}
             </div>
         </div>
     );

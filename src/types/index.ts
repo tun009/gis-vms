@@ -2,7 +2,7 @@ export type CameraStatus = 'online' | 'offline' | 'error' | 'maintenance';
 export type Manufacturer = 'Dahua' | 'Hikvision';
 export type ViewMode = 'map' | 'monitor' | 'settings';
 export type DrawMode = 'idle' | 'drawing' | 'drawn';
-export type GridLayout = '2x2' | '3x3' | '4x4';
+export type GridLayout = '2x2' | '4x4';
 
 export interface Camera {
     id: string;

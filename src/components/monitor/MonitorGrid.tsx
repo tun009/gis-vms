@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LayoutGrid } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import type { GridLayout } from '../../types';
 import VideoTile from './VideoTile';
 
-const gridConfigs: Record<GridLayout, { cols: string; label: string }> = {
-    '2x2': { cols: 'grid-cols-2', label: '2×2' },
-    '3x3': { cols: 'grid-cols-3', label: '3×3' },
-    '4x4': { cols: 'grid-cols-4', label: '4×4' },
+const gridConfigs: Record<GridLayout, { cols: number; label: string; slots: number }> = {
+    '2x2': { cols: 2, label: '2×2', slots: 4 },
+    '4x4': { cols: 4, label: '4×4', slots: 16 },
 };
 
 const WEEKDAYS = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
@@ -40,6 +39,30 @@ export default function MonitorGrid() {
     const onlineCount = cameras.filter(c => c.status === 'online').length;
     const offlineCount = cameras.filter(c => c.status !== 'online').length;
 
+    const rows = config.cols; // 2x2 → 2 rows, 4x4 → 4 rows
+
+    // Measure container to compute exact row height
+    const gridContainerRef = useRef<HTMLDivElement>(null);
+    const [rowHeight, setRowHeight] = useState(0);
+
+    useEffect(() => {
+        const el = gridContainerRef.current;
+        if (!el) return;
+
+        const compute = () => {
+            const h = el.clientHeight;
+            const gap = 6; // gap-1.5 = 6px
+            const padding = 12; // p-1.5 = 6px * 2
+            const availableHeight = h - padding - (rows - 1) * gap;
+            setRowHeight(Math.floor(availableHeight / rows));
+        };
+
+        compute();
+        const ro = new ResizeObserver(compute);
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, [rows]);
+
     return (
         <div className="flex flex-col h-full bg-base">
             {/* Sub-header */}
@@ -56,8 +79,8 @@ export default function MonitorGrid() {
                                 key={layout}
                                 onClick={() => dispatch({ type: 'SET_GRID_LAYOUT', payload: layout })}
                                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${state.gridLayout === layout
-                                        ? 'bg-brand text-fg shadow-sm'
-                                        : 'text-fg-muted hover:text-fg-dim'
+                                    ? 'bg-brand text-fg shadow-sm'
+                                    : 'text-fg-muted hover:text-fg-dim'
                                     }`}
                             >
                                 {gridConfigs[layout].label}
@@ -85,26 +108,30 @@ export default function MonitorGrid() {
                     </div>
 
                     {/* Clock block */}
-                    <div className="flex flex-col items-end bg-elevated border border-white/[0.08] rounded-lg px-3.5 py-1.5 min-w-[120px]">
+                    {/* <div className="flex flex-col items-end bg-elevated border border-white/[0.08] rounded-lg px-3.5 py-1.5 min-w-[120px]">
                         <span className="text-[17px] font-mono font-bold text-fg tracking-[0.08em] leading-tight tabular-nums">
                             {clock}
                         </span>
                         <span className="text-[10px] text-fg-muted tracking-wider uppercase mt-0.5 leading-tight">
                             {date}
                         </span>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
-            {/* Video grid — show ALL cameras, scroll */}
-            <div className="flex-1 overflow-auto p-3">
-                <div className={`grid ${config.cols} gap-2`}>
-                    {cameras.map((camera, idx) => (
-                        <VideoTile
-                            key={`${camera.id}-${idx}`}
-                            camera={camera}
-                            compact={state.gridLayout !== '2x2'}
-                        />
+            {/* Video grid — first page fits viewport, scroll for more */}
+            <div ref={gridContainerRef} className="flex-1 min-h-0 overflow-auto p-1.5">
+                <div
+                    className="grid w-full gap-1.5"
+                    style={{
+                        gridTemplateColumns: `repeat(${config.cols}, 1fr)`,
+                        gridAutoRows: rowHeight > 0 ? `${rowHeight}px` : `calc((100% - ${(rows - 1) * 6}px) / ${rows})`,
+                    }}
+                >
+                    {cameras.map((camera) => (
+                        <div key={camera.id} className="min-h-0 min-w-0 rounded-lg overflow-hidden">
+                            <VideoTile camera={camera} compact={state.gridLayout === '4x4'} fillParent />
+                        </div>
                     ))}
                 </div>
             </div>

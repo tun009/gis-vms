@@ -7,7 +7,6 @@ import { useApp } from '../../context/AppContext';
 import { useSpatialFilter } from '../../hooks/useSpatialFilter';
 import { useToast } from '../../context/ToastContext';
 import type { Camera } from '../../types';
-import CameraMapPanel from './CameraMapPanel';
 
 type DrawTool = 'polygon' | 'rectangle' | null;
 
@@ -69,7 +68,6 @@ export default function MapView() {
     const polygonHandlerRef = useRef<any>(null);
     const [activeTool, setActiveTool] = useState<DrawTool>(null);
     const [selBox, setSelBox] = useState<SelBox | null>(null);
-    const [panelPos, setPanelPos] = useState<{ x: number; y: number } | null>(null);
     const isRectDragging = useRef(false);
     const rectStart = useRef({ x: 0, y: 0 });
     const { filterCamerasInPolygon } = useSpatialFilter();
@@ -112,10 +110,26 @@ export default function MapView() {
             const coords = latlngs.map(ll => [ll.lat, ll.lng]);
             setActiveTool(null);
             dispatch({ type: 'SET_DRAWN_POLYGON', payload: coords });
+            dispatch({ type: 'CLOSE_DETAIL' });
+            dispatch({ type: 'SET_SELECTED_CAMERA', payload: null });
         });
 
         mapRef.current = map;
+
+    // ── Auto-resize: tell Leaflet when its container changes size ─────
         // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        const container = wrapperRef.current;
+        const map = mapRef.current;
+        if (!container || !map) return;
+
+        const ro = new ResizeObserver(() => {
+            map.invalidateSize({ animate: false });
+        });
+        ro.observe(container);
+        return () => ro.disconnect();
     }, []);
 
     // ── Apply spatial filter when polygon changes ────────────────────
@@ -220,6 +234,8 @@ export default function MapView() {
 
             setActiveTool(null);
             dispatch({ type: 'SET_DRAWN_POLYGON', payload: coords });
+            dispatch({ type: 'CLOSE_DETAIL' });
+            dispatch({ type: 'SET_SELECTED_CAMERA', payload: null });
         };
 
         wrapper.addEventListener('mousedown', onMouseDown);
@@ -282,7 +298,10 @@ export default function MapView() {
                 if (el) el.style.opacity = isInFilter ? '1' : '0.2';
             } else {
                 const marker = L.marker([camera.lat, camera.lng], { icon });
-                marker.on('click', () => dispatch({ type: 'SET_SELECTED_CAMERA', payload: camera }));
+                marker.on('click', () => {
+                    dispatch({ type: 'SET_SELECTED_CAMERA', payload: camera });
+                    dispatch({ type: 'OPEN_DETAIL' });
+                });
                 marker.addTo(mapRef.current!);
                 markersRef.current[camera.id] = marker;
                 if (!isInFilter && state.drawnPolygon) {
@@ -306,31 +325,7 @@ export default function MapView() {
         }
     }, [state.drawnPolygon]);
 
-    // ── Track marker pixel position for floating panel ───────────────
-    useEffect(() => {
-        if (!state.selectedCamera || !mapRef.current || !wrapperRef.current) {
-            setPanelPos(null);
-            return;
-        }
-        const cam = state.selectedCamera;
-        const map = mapRef.current;
-        const wrapper = wrapperRef.current;
 
-        const computePos = () => {
-            const pt = map.latLngToContainerPoint(L.latLng(cam.lat, cam.lng));
-            const { offsetWidth: W, offsetHeight: H } = wrapper;
-            const PANEL_W = 320;
-            const PANEL_H = 280; // approx panel height
-            // Clamp so panel doesn't go off-screen
-            const x = Math.min(Math.max(pt.x, PANEL_W / 2 + 8), W - PANEL_W / 2 - 8);
-            const y = Math.min(Math.max(pt.y - PANEL_H - 24, 8), H - PANEL_H - 8);
-            setPanelPos({ x, y });
-        };
-
-        computePos();
-        map.on('move zoom moveend zoomend', computePos);
-        return () => { map.off('move zoom moveend zoomend', computePos); };
-    }, [state.selectedCamera]);
 
     // ── Fly to selected camera ───────────────────────────────────────
     useEffect(() => {
@@ -355,30 +350,7 @@ export default function MapView() {
             {/* Leaflet map canvas */}
             <div ref={mapContainerRef} className="absolute inset-0" />
 
-            {/* Camera panel anchored to marker like a rich popup */}
-            {!state.isDetailOpen && state.selectedCamera && panelPos && (
-                <div
-                    className="absolute z-[1000] w-80 animate-fade-in"
-                    style={{
-                        left: panelPos.x,
-                        top: panelPos.y,
-                        transform: 'translateX(-50%)',
-                        filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.6))',
-                    }}
-                >
-                    <CameraMapPanel />
-                    {/* Arrow pointing down to marker */}
-                    <div
-                        className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-full"
-                        style={{
-                            width: 0, height: 0,
-                            borderLeft: '8px solid transparent',
-                            borderRight: '8px solid transparent',
-                            borderTop: '8px solid rgba(30,32,37,0.97)',
-                        }}
-                    />
-                </div>
-            )}
+
 
             {/* Lightshot-style selection box */}
             {selBox && selBox.w > 4 && selBox.h > 4 && (

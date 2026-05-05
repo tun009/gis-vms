@@ -1,4 +1,4 @@
-import { X, MapPin, Cpu, Wifi, Calendar, Activity, WifiOff } from 'lucide-react';
+import { X, MapPin, Cpu, Wifi, Calendar, Activity, WifiOff, ArrowLeft } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import StatusBadge from '../ui/StatusBadge';
 import VideoPlayer from '../ui/VideoPlayer';
@@ -42,9 +42,19 @@ export default function CameraDetail() {
     });
 
     return (
-        <div className="flex flex-col h-full animate-slide-right">
-            {/* Header */}
+        <div className="flex flex-col h-full">
+            {/* Header with Back button */}
             <div className="px-5 pt-5 pb-4 border-b border-white/[0.08] flex-shrink-0">
+                <button
+                    onClick={() => {
+                        dispatch({ type: 'CLOSE_DETAIL' });
+                        dispatch({ type: 'SET_SELECTED_CAMERA', payload: null });
+                    }}
+                    className="flex items-center gap-2 text-fg-muted hover:text-fg text-sm mb-3 transition-colors group"
+                >
+                    <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+                    <span>Danh sách camera</span>
+                </button>
                 <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2">
@@ -57,13 +67,6 @@ export default function CameraDetail() {
                         <h2 className="text-sm font-semibold text-fg leading-snug">{camera.name}</h2>
                         <p className="text-fg-muted font-mono text-xs mt-1">{camera.ip}</p>
                     </div>
-                    <button
-                        onClick={() => dispatch({ type: 'CLOSE_DETAIL' })}
-                        className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.12] text-fg-muted
-                       hover:text-fg-dim hover:bg-white/[0.08] transition-all flex-shrink-0"
-                    >
-                        <X size={14} />
-                    </button>
                 </div>
             </div>
 
